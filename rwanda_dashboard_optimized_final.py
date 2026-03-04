@@ -165,31 +165,32 @@ def calculate_road_length(geometry):
 def load_map_data():
     """Load map data with optimized caching"""
     try:
-        base_path = "/Users/nhiclap001/Desktop/MoH Leadership/Health Facility Mapping"
+        # Use relative paths for cloud deployment
+        base_path = os.path.dirname(os.path.abspath(__file__))
         
         # Load shapefiles
-        rwanda = gpd.read_file(f"{base_path}/Shapefiles/Rwanda/rwa_adm0_2006_NISR_WGS1984_20181002.shp")
-        district = gpd.read_file(f"{base_path}/Shapefiles/Rwanda/rwa_adm1_2006_NISR_WGS1984_20181002.shp")
+        rwanda = gpd.read_file(os.path.join(base_path, "Shapefiles/Rwanda/rwa_adm0_2006_NISR_WGS1984_20181002.shp"))
+        district = gpd.read_file(os.path.join(base_path, "Shapefiles/Rwanda/rwa_adm1_2006_NISR_WGS1984_20181002.shp"))
         
         # Load facility data
-        facility_file = f"{base_path}/Health Facility/Facility GIS_.xlsx"
+        facility_file = os.path.join(base_path, "Health Facility/Facility GIS_.xlsx")
         hp_df = pd.read_excel(facility_file, sheet_name='HP')
         hc_df = pd.read_excel(facility_file, sheet_name='HC')
         hosp_df = pd.read_excel(facility_file, sheet_name='HOSP')
         
         # Load road geometries with distance data
-        hc_roads_path = f"{base_path}/Shapefiles/HC_to_hospital/Health_centers_to_Hospitals.gpkg"
+        hc_roads_path = os.path.join(base_path, "shapefiles/HC_to_hospital/Health_centers_to_Hospitals.gpkg")
         if not os.path.exists(hc_roads_path):
-            hc_roads_path = f"{base_path}/shapefiles/HC_to_hospital/Health_centers_to_Hospitals.gpkg"
+            hc_roads_path = os.path.join(base_path, "Shapefiles/HC_to_hospital/Health_centers_to_Hospitals.gpkg")
         hc_roads = gpd.read_file(hc_roads_path)
         
         # Convert distance from meters to kilometers
         if 'Dist_hosp' in hc_roads.columns:
             hc_roads['distance_km'] = hc_roads['Dist_hosp'] / 1000.0
         
-        hosp_roads_path = f"{base_path}/Shapefiles/Hospital_to_NTH/Hospitals_to_NTH_1.gpkg"
+        hosp_roads_path = os.path.join(base_path, "shapefiles/Hospital_to_NTH/Hospitals_to_NTH_1.gpkg")
         if not os.path.exists(hosp_roads_path):
-            hosp_roads_path = f"{base_path}/shapefiles/Hospital_to_NTH/Hospitals_to_NTH_1.gpkg"
+            hosp_roads_path = os.path.join(base_path, "Shapefiles/Hospital_to_NTH/Hospitals_to_NTH_1.gpkg")
         hosp_roads = gpd.read_file(hosp_roads_path)
         
         # Create GeoDataFrames
